@@ -1,0 +1,568 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXContainerItemProxy section */
+		E15B06272EC0DF1700ECEB2C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E15B06112EC0DF1600ECEB2C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E15B06182EC0DF1600ECEB2C;
+			remoteInfo = AirpodsMove;
+		};
+		E15B06312EC0DF1700ECEB2C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E15B06112EC0DF1600ECEB2C /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E15B06182EC0DF1600ECEB2C;
+			remoteInfo = AirpodsMove;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		E15B06192EC0DF1600ECEB2C /* AirpodsMove.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AirpodsMove.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E15B06262EC0DF1700ECEB2C /* AirpodsMoveTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirpodsMoveTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E15B06302EC0DF1700ECEB2C /* AirpodsMoveUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AirpodsMoveUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		E15B061B2EC0DF1600ECEB2C /* AirpodsMove */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AirpodsMove;
+			sourceTree = "<group>";
+		};
+		E15B06292EC0DF1700ECEB2C /* AirpodsMoveTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AirpodsMoveTests;
+			sourceTree = "<group>";
+		};
+		E15B06332EC0DF1700ECEB2C /* AirpodsMoveUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = AirpodsMoveUITests;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		E15B06162EC0DF1600ECEB2C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E15B06232EC0DF1700ECEB2C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E15B062D2EC0DF1700ECEB2C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E15B06102EC0DF1600ECEB2C = {
+			isa = PBXGroup;
+			children = (
+				E15B061B2EC0DF1600ECEB2C /* AirpodsMove */,
+				E15B06292EC0DF1700ECEB2C /* AirpodsMoveTests */,
+				E15B06332EC0DF1700ECEB2C /* AirpodsMoveUITests */,
+				E15B061A2EC0DF1600ECEB2C /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E15B061A2EC0DF1600ECEB2C /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				E15B06192EC0DF1600ECEB2C /* AirpodsMove.app */,
+				E15B06262EC0DF1700ECEB2C /* AirpodsMoveTests.xctest */,
+				E15B06302EC0DF1700ECEB2C /* AirpodsMoveUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		E15B06182EC0DF1600ECEB2C /* AirpodsMove */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E15B063A2EC0DF1700ECEB2C /* Build configuration list for PBXNativeTarget "AirpodsMove" */;
+			buildPhases = (
+				E15B06152EC0DF1600ECEB2C /* Sources */,
+				E15B06162EC0DF1600ECEB2C /* Frameworks */,
+				E15B06172EC0DF1600ECEB2C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				E15B061B2EC0DF1600ECEB2C /* AirpodsMove */,
+			);
+			name = AirpodsMove;
+			packageProductDependencies = (
+			);
+			productName = AirpodsMove;
+			productReference = E15B06192EC0DF1600ECEB2C /* AirpodsMove.app */;
+			productType = "com.apple.product-type.application";
+		};
+		E15B06252EC0DF1700ECEB2C /* AirpodsMoveTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E15B063D2EC0DF1700ECEB2C /* Build configuration list for PBXNativeTarget "AirpodsMoveTests" */;
+			buildPhases = (
+				E15B06222EC0DF1700ECEB2C /* Sources */,
+				E15B06232EC0DF1700ECEB2C /* Frameworks */,
+				E15B06242EC0DF1700ECEB2C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E15B06282EC0DF1700ECEB2C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E15B06292EC0DF1700ECEB2C /* AirpodsMoveTests */,
+			);
+			name = AirpodsMoveTests;
+			packageProductDependencies = (
+			);
+			productName = AirpodsMoveTests;
+			productReference = E15B06262EC0DF1700ECEB2C /* AirpodsMoveTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E15B062F2EC0DF1700ECEB2C /* AirpodsMoveUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E15B06402EC0DF1700ECEB2C /* Build configuration list for PBXNativeTarget "AirpodsMoveUITests" */;
+			buildPhases = (
+				E15B062C2EC0DF1700ECEB2C /* Sources */,
+				E15B062D2EC0DF1700ECEB2C /* Frameworks */,
+				E15B062E2EC0DF1700ECEB2C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E15B06322EC0DF1700ECEB2C /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E15B06332EC0DF1700ECEB2C /* AirpodsMoveUITests */,
+			);
+			name = AirpodsMoveUITests;
+			packageProductDependencies = (
+			);
+			productName = AirpodsMoveUITests;
+			productReference = E15B06302EC0DF1700ECEB2C /* AirpodsMoveUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		E15B06112EC0DF1600ECEB2C /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					E15B06182EC0DF1600ECEB2C = {
+						CreatedOnToolsVersion = 26.0.1;
+					};
+					E15B06252EC0DF1700ECEB2C = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = E15B06182EC0DF1600ECEB2C;
+					};
+					E15B062F2EC0DF1700ECEB2C = {
+						CreatedOnToolsVersion = 26.0.1;
+						TestTargetID = E15B06182EC0DF1600ECEB2C;
+					};
+				};
+			};
+			buildConfigurationList = E15B06142EC0DF1600ECEB2C /* Build configuration list for PBXProject "AirpodsMove" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = E15B06102EC0DF1600ECEB2C;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = E15B061A2EC0DF1600ECEB2C /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				E15B06182EC0DF1600ECEB2C /* AirpodsMove */,
+				E15B06252EC0DF1700ECEB2C /* AirpodsMoveTests */,
+				E15B062F2EC0DF1700ECEB2C /* AirpodsMoveUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E15B06172EC0DF1600ECEB2C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E15B06242EC0DF1700ECEB2C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E15B062E2EC0DF1700ECEB2C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		E15B06152EC0DF1600ECEB2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E15B06222EC0DF1700ECEB2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E15B062C2EC0DF1700ECEB2C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E15B06282EC0DF1700ECEB2C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E15B06182EC0DF1600ECEB2C /* AirpodsMove */;
+			targetProxy = E15B06272EC0DF1700ECEB2C /* PBXContainerItemProxy */;
+		};
+		E15B06322EC0DF1700ECEB2C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E15B06182EC0DF1600ECEB2C /* AirpodsMove */;
+			targetProxy = E15B06312EC0DF1700ECEB2C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		E15B06382EC0DF1700ECEB2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		E15B06392EC0DF1700ECEB2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		E15B063B2EC0DF1700ECEB2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = avinash.AirpodsMove;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E15B063C2EC0DF1700ECEB2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_APP_SANDBOX = YES;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SELECTED_FILES = readonly;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = avinash.AirpodsMove;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				REGISTER_APP_GROUPS = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		E15B063E2EC0DF1700ECEB2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = avinash.AirpodsMoveTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AirpodsMove.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AirpodsMove";
+			};
+			name = Debug;
+		};
+		E15B063F2EC0DF1700ECEB2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = avinash.AirpodsMoveTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/AirpodsMove.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/AirpodsMove";
+			};
+			name = Release;
+		};
+		E15B06412EC0DF1700ECEB2C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = avinash.AirpodsMoveUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = AirpodsMove;
+			};
+			name = Debug;
+		};
+		E15B06422EC0DF1700ECEB2C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = avinash.AirpodsMoveUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TEST_TARGET_NAME = AirpodsMove;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		E15B06142EC0DF1600ECEB2C /* Build configuration list for PBXProject "AirpodsMove" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E15B06382EC0DF1700ECEB2C /* Debug */,
+				E15B06392EC0DF1700ECEB2C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E15B063A2EC0DF1700ECEB2C /* Build configuration list for PBXNativeTarget "AirpodsMove" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E15B063B2EC0DF1700ECEB2C /* Debug */,
+				E15B063C2EC0DF1700ECEB2C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E15B063D2EC0DF1700ECEB2C /* Build configuration list for PBXNativeTarget "AirpodsMoveTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E15B063E2EC0DF1700ECEB2C /* Debug */,
+				E15B063F2EC0DF1700ECEB2C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E15B06402EC0DF1700ECEB2C /* Build configuration list for PBXNativeTarget "AirpodsMoveUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E15B06412EC0DF1700ECEB2C /* Debug */,
+				E15B06422EC0DF1700ECEB2C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = E15B06112EC0DF1600ECEB2C /* Project object */;
+}
