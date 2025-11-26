@@ -12,6 +12,11 @@ struct ContentView: View {
             Text("Pitch: \(motionViewModel.pitch, specifier: "%.2f")")
             Text(motionViewModel.gestureDetected ? "Sudden Up Gesture Detected!" : "")
                 .foregroundColor(.green)
+                .onChange(of: motionViewModel.gestureDetected) { detected in
+                    if detected {
+                        shortcutRecorder.triggerShortcut()
+                    }
+                }
             
             Button(action: {
                 if isListening {
@@ -31,26 +36,24 @@ struct ContentView: View {
             Divider()
             
             Button(action: {
-                shortcutRecorder.startRecording(duration: 2.0) {
-                    // Recording completed
+                if shortcutRecorder.isRecording {
+                    shortcutRecorder.stopRecording()
+                } else {
+                    shortcutRecorder.startRecording()
                 }
             }) {
-                Text(shortcutRecorder.isRecording ? "Recording... Press keys now (keyboard frozen)" : "Record Keyboard Shortcut")
+                Text(shortcutRecorder.isRecording ? "Press keys to record..." : "Record Keyboard Shortcut")
                     .padding()
                     .background(shortcutRecorder.isRecording ? Color.orange : Color.blue)
                     .foregroundColor(.white)
                     .cornerRadius(10)
             }
-            .disabled(shortcutRecorder.isRecording)
+
             
-            if shortcutRecorder.isRecording {
-                Text("Keyboard is frozen - system shortcuts won't work")
-                    .font(.caption)
-                    .foregroundColor(.orange)
-            }
+
             
             Button(action: {
-                displayedShortcut = shortcutRecorder.getRecordedShortcut()
+                displayedShortcut = shortcutRecorder.recordedShortcut
             }) {
                 Text("Execute")
                     .padding()
