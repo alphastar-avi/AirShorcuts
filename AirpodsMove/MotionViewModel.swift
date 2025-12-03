@@ -17,9 +17,27 @@ class MotionViewModel: ObservableObject {
     @Published var lastDetectedGesture: GestureDirection?
     @Published var isListening = false
     
+    // Thresholds for each direction (default to 0.15)
+    var thresholds: [GestureDirection: Double] = [
+        .up: 0.15,
+        .down: 0.15,
+        .left: 0.15,
+        .right: 0.15
+    ]
+    
     private var previousPitch: Double?
     private var previousYaw: Double?
     private var baselineYaw: Double?
+    
+    func updateThresholds(settings: [GestureDirection: GestureSettings]) {
+        for (direction, setting) in settings {
+            // Formula: Threshold = 0.40 - (Sensitivity * 0.35)
+            // Sensitivity 0.0 (Low) -> 0.40 (Hard)
+            // Sensitivity 1.0 (High) -> 0.05 (Easy)
+            let threshold = 0.40 - (setting.sensitivity * 0.35)
+            thresholds[direction] = threshold
+        }
+    }
     
     func startListening() {
         guard motionManager.isDeviceMotionAvailable else {
@@ -56,27 +74,21 @@ class MotionViewModel: ObservableObject {
     private func detectGestures(currentPitch: Double, currentYaw: Double) {
         guard let prevPitch = previousPitch, let prevYaw = previousYaw else { return }
         
-        // Thresholds (tunable)
-        let pitchThreshold = 0.15 // Radians
-        let yawThreshold = 0.15   // Radians
-        
         // Pitch Detection (Up/Down)
         let pitchDelta = currentPitch - prevPitch
         
-        if pitchDelta > pitchThreshold {
+        if pitchDelta > (thresholds[.up] ?? 0.15) {
             triggerGesture(.up)
-        } else if pitchDelta < -pitchThreshold {
+        } else if pitchDelta < -(thresholds[.down] ?? 0.15) {
             triggerGesture(.down)
         }
         
         // Yaw Detection (Left/Right)
-        // Note: Yaw wraps around at PI/-PI, but for small head movements simple delta is usually fine.
-        // We might need to handle wrap-around if the user is facing exactly backwards, but unlikely for this use case.
         let yawDelta = currentYaw - prevYaw
         
-        if yawDelta > yawThreshold {
-            triggerGesture(.left) // Positive yaw is typically left (check coordinate system)
-        } else if yawDelta < -yawThreshold {
+        if yawDelta > (thresholds[.left] ?? 0.15) {
+            triggerGesture(.left)
+        } else if yawDelta < -(thresholds[.right] ?? 0.15) {
             triggerGesture(.right)
         }
     }

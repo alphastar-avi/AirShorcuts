@@ -11,6 +11,7 @@ enum ActionMode: String, CaseIterable, Codable {
 // GestureSettings struct to hold configuration for each direction
 struct GestureSettings: Codable {
     var mode: ActionMode = .brightness
+    var sensitivity: Double = 0.7 // Default to ~Normal (0.15 threshold)
     var recordedKeyCode: Int?
     var recordedModifiers: Int = 0 // Store raw value for Codable simplicity
     var shortcutString: String = "None"
@@ -200,6 +201,19 @@ class ActionController: ObservableObject {
     func updateMode(_ mode: ActionMode) {
         var current = gestureSettings[selectedDirection] ?? GestureSettings()
         current.mode = mode
+        
+        // Mutate dictionary
+        var newSettings = gestureSettings
+        newSettings[selectedDirection] = current
+        gestureSettings = newSettings
+        
+        saveSettings()
+    }
+    
+    // Helper to update sensitivity
+    func updateSensitivity(_ sensitivity: Double) {
+        var current = gestureSettings[selectedDirection] ?? GestureSettings()
+        current.sensitivity = sensitivity
         
         // Mutate dictionary
         var newSettings = gestureSettings

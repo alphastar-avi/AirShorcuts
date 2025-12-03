@@ -100,6 +100,10 @@ struct ContentView: View {
         .frame(width: 400, height: 600)
         .onAppear {
             actionController.checkPermission()
+            motionViewModel.updateThresholds(settings: actionController.gestureSettings)
+        }
+        .onChange(of: actionController.gestureSettings.values.map { $0.sensitivity }) { _ in
+            motionViewModel.updateThresholds(settings: actionController.gestureSettings)
         }
         .sheet(isPresented: $showingConfigSheet) {
             ConfigurationSheet(actionController: actionController)
@@ -165,6 +169,7 @@ struct ConfigurationSheet: View {
                 .font(.title2)
                 .padding()
             
+            // Mode Picker
             Picker("Action Mode", selection: Binding(
                 get: { settings.mode },
                 set: { actionController.updateMode($0) }
@@ -174,7 +179,36 @@ struct ConfigurationSheet: View {
                 }
             }
             .pickerStyle(SegmentedPickerStyle())
-            .padding()
+            .padding(.horizontal)
+            
+            // Sensitivity Slider
+            VStack(alignment: .leading, spacing: 5) {
+                HStack {
+                    Text("Sensitivity")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                    Spacer()
+                    Text(String(format: "%.2f", settings.sensitivity))
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                }
+                .padding(.horizontal)
+                
+                Slider(value: Binding(
+                    get: { settings.sensitivity },
+                    set: { actionController.updateSensitivity($0) }
+                ), in: 0.0...1.0)
+                .padding(.horizontal)
+                
+                HStack {
+                    Text("Low")
+                    Spacer()
+                    Text("High")
+                }
+                .font(.caption2)
+                .foregroundColor(.secondary)
+                .padding(.horizontal)
+            }
             
             if settings.mode == .shortcut {
                 VStack {
@@ -207,7 +241,7 @@ struct ConfigurationSheet: View {
             }
             .padding()
         }
-        .frame(width: 300, height: 400)
+        .frame(width: 300, height: 500)
     }
 }
 
