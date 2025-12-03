@@ -31,9 +31,10 @@ struct ContentView: View {
                             Label(String(format: "Pitch: %.2f", motionViewModel.pitch), systemImage: "arrow.up.and.down")
                             Label(String(format: "Yaw: %.2f", motionViewModel.yaw), systemImage: "arrow.left.and.right")
                         }
-                        .font(.system(size: 14, weight: .medium, design: .monospaced))
+                        .font(.system(size: 15, weight: .medium, design: .monospaced))
                         .foregroundColor(.secondary)
                     }
+                    .padding(.leading, 8)
                     
                     Spacer()
                     
