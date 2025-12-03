@@ -3,48 +3,79 @@ import AppKit
 
 struct ContentView: View {
     @StateObject private var motionViewModel = MotionViewModel()
-    @StateObject private var brightnessController = BrightnessController()
-    @State private var isListening = false
+    @StateObject private var actionController = ActionController()
     
     var body: some View {
         VStack(spacing: 20) {
+            Text("AirpodsMove")
+                .font(.largeTitle)
+                .padding()
+            
             Text("Pitch: \(motionViewModel.pitch, specifier: "%.2f")")
             Text(motionViewModel.gestureDetected ? "Sudden Up Gesture Detected!" : "")
                 .foregroundColor(.green)
                 .onChange(of: motionViewModel.gestureDetected) { old, detected in
                     if detected {
-                        brightnessController.increaseBrightness()
+                        actionController.triggerAction()
                     }
                 }
             
-            Button(action: {
-                if isListening {
+            Button(motionViewModel.isListening ? "Stop Listening" : "Start Listening") {
+                if motionViewModel.isListening {
                     motionViewModel.stopListening()
                 } else {
                     motionViewModel.startListening()
                 }
-                isListening.toggle()
-            }) {
-                Text(isListening ? "Stop Listening" : "Start Listening")
-                    .padding()
-                    .background(isListening ? Color.red : Color.green)
+            }
+            .padding()
+            .background(motionViewModel.isListening ? Color.red : Color.green)
+            .foregroundColor(.white)
+            .cornerRadius(10)
+            
+            Divider()
+            
+            Picker("Action Mode", selection: $actionController.currentMode) {
+                ForEach(ActionMode.allCases, id: \.self) { mode in
+                    Text(mode.rawValue).tag(mode)
+                }
+            }
+            .pickerStyle(SegmentedPickerStyle())
+            .padding(.horizontal)
+            
+            if actionController.currentMode == .shortcut {
+                VStack {
+                    Text("Recorded Shortcut: \(actionController.recordedShortcutString)")
+                        .font(.headline)
+                    
+                    Button(actionController.isRecording ? "Press Keys..." : "Record Shortcut") {
+                        if !actionController.isRecording {
+                            actionController.startRecording()
+                        }
+                    }
+                    .padding(5)
+                    .background(actionController.isRecording ? Color.orange : Color.blue)
                     .foregroundColor(.white)
-                    .cornerRadius(10)
+                    .cornerRadius(5)
+                }
+                .padding()
+                .background(Color.gray.opacity(0.1))
+                .cornerRadius(10)
+            } else {
+                Text("Controls Screen Brightness")
+                    .font(.caption)
+                    .foregroundColor(.gray)
             }
             
             Divider()
             
-            if !brightnessController.isPermissionGranted {
+            if !actionController.isPermissionGranted {
                 VStack(spacing: 10) {
                     Text("⚠️ Accessibility Permission Missing")
                         .font(.headline)
                         .foregroundColor(.red)
                     
-                    Text("Required to control brightness")
-                        .font(.caption)
-                    
                     Button("Open Settings") {
-                        brightnessController.openSettings()
+                        actionController.openSettings()
                     }
                     .padding(5)
                     .background(Color.blue)
@@ -52,7 +83,7 @@ struct ContentView: View {
                     .cornerRadius(5)
                     
                     Button("Reveal App in Finder") {
-                        brightnessController.revealAppInFinder()
+                        actionController.revealAppInFinder()
                     }
                     .padding(5)
                     .background(Color.gray)
@@ -67,19 +98,11 @@ struct ContentView: View {
                 .padding()
                 .background(Color.red.opacity(0.1))
                 .cornerRadius(10)
-            } else {
-                Text("Brightness Control Active")
-                    .font(.headline)
-                    .foregroundColor(.blue)
-                
-                Text("Tilt head UP suddenly to increase brightness")
-                    .font(.caption)
-                    .foregroundColor(.gray)
             }
         }
         .padding()
         .onAppear {
-            brightnessController.checkPermission()
+            actionController.checkPermission()
         }
     }
 }

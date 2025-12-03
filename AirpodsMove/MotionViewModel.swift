@@ -8,6 +8,7 @@ class MotionViewModel: ObservableObject {
     
     @Published var pitch: Double = 0.0
     @Published var gestureDetected = false
+    @Published var isListening = false
     
     private var previousPitch: Double?
     
@@ -16,6 +17,8 @@ class MotionViewModel: ObservableObject {
             print("Headphone motion data is not available.")
             return
         }
+        
+        isListening = true
         
         motionManager.startDeviceMotionUpdates(to: .main) { [weak self] (motion, error) in
             guard let self = self, let motion = motion else { return }
@@ -41,5 +44,6 @@ class MotionViewModel: ObservableObject {
     func stopListening() {
         motionManager.stopDeviceMotionUpdates()
         previousPitch = nil
+        isListening = false
     }
 }
