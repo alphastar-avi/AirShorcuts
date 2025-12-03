@@ -19,47 +19,51 @@ struct ContentView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 25) {
-                // Header
-                VStack(spacing: 8) {
-                    Text("Air Shortcuts")
-                        .font(.system(size: 32, weight: .bold, design: .rounded))
-                        .foregroundColor(.primary)
+                // Header Row
+                HStack(alignment: .center) {
+                    // Left: Title and Metrics
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("Air Shortcuts")
+                            .font(.system(size: 32, weight: .bold, design: .rounded))
+                            .foregroundColor(.primary)
+                        
+                        HStack(spacing: 15) {
+                            Label(String(format: "Pitch: %.2f", motionViewModel.pitch), systemImage: "arrow.up.and.down")
+                            Label(String(format: "Yaw: %.2f", motionViewModel.yaw), systemImage: "arrow.left.and.right")
+                        }
+                        .font(.system(size: 14, weight: .medium, design: .monospaced))
+                        .foregroundColor(.secondary)
+                    }
                     
-                    HStack(spacing: 15) {
-                        Label(String(format: "Pitch: %.2f", motionViewModel.pitch), systemImage: "arrow.up.and.down")
-                        Label(String(format: "Yaw: %.2f", motionViewModel.yaw), systemImage: "arrow.left.and.right")
+                    Spacer()
+                    
+                    // Right: Status
+                    ZStack {
+                        if let lastGesture = motionViewModel.lastDetectedGesture {
+                            Text("\(lastGesture.rawValue)!")
+                                .font(.title3.bold())
+                                .foregroundColor(.green)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 16)
+                                .background(Color.green.opacity(0.1))
+                                .cornerRadius(12)
+                                .transition(.scale.combined(with: .opacity))
+                                .onAppear {
+                                    actionController.triggerAction(for: lastGesture)
+                                }
+                        } else {
+                            Text("Waiting for gestures...")
+                                .font(.headline)
+                                .foregroundColor(.secondary)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
+                                .background(Color.secondary.opacity(0.1))
+                                .cornerRadius(12)
+                        }
                     }
-                    .font(.system(size: 16, weight: .medium, design: .monospaced)) // Increased size
-                    .foregroundColor(.secondary)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .background(.ultraThinMaterial)
-                    .cornerRadius(20)
                 }
+                .padding(.horizontal)
                 .padding(.top, 20)
-                
-                // Gesture Status
-                ZStack {
-                    if let lastGesture = motionViewModel.lastDetectedGesture {
-                        Text("\(lastGesture.rawValue) Detected!")
-                            .font(.title3.bold())
-                            .foregroundColor(.green)
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 16)
-                            .background(Color.green.opacity(0.1))
-                            .cornerRadius(12)
-                            .transition(.scale.combined(with: .opacity))
-                            .onAppear {
-                                actionController.triggerAction(for: lastGesture)
-                            }
-                    } else {
-                        Text("Waiting for gesture...")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .padding(.vertical, 8)
-                    }
-                }
-                .frame(height: 40)
                 
                 // Grid UI
                 ScrollView {
