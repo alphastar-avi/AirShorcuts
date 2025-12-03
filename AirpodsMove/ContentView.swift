@@ -229,9 +229,24 @@ struct ConfigurationSheet: View {
                 .background(Color.gray.opacity(0.1))
                 .cornerRadius(10)
             } else {
-                Text("Controls Screen Brightness")
-                    .foregroundColor(.gray)
-                    .padding()
+                // Preset Picker
+                VStack(alignment: .leading) {
+                    Text("Select Action")
+                        .font(.caption)
+                        .foregroundColor(.gray)
+                        .padding(.leading)
+                    
+                    Picker("Preset", selection: Binding(
+                        get: { settings.preset },
+                        set: { actionController.updatePreset($0) }
+                    )) {
+                        ForEach(PresetAction.allCases, id: \.self) { action in
+                            Text(action.rawValue).tag(action)
+                        }
+                    }
+                    .pickerStyle(MenuPickerStyle()) // Use Menu for long list
+                    .padding(.horizontal)
+                }
             }
             
             Spacer()

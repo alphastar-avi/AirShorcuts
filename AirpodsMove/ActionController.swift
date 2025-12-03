@@ -4,13 +4,39 @@ import Combine
 import Carbon
 
 enum ActionMode: String, CaseIterable, Codable {
-    case brightness = "Brightness"
+    case preset = "Preset Action"
     case shortcut = "Custom Shortcut"
+}
+
+enum PresetAction: String, CaseIterable, Codable {
+    // System
+    case brightnessUp = "Brightness Up"
+    case brightnessDown = "Brightness Down"
+    case volumeUp = "Volume Up"
+    case volumeDown = "Volume Down"
+    case mute = "Mute"
+    
+    // Media
+    case playPause = "Play/Pause"
+    case nextTrack = "Next Track"
+    case previousTrack = "Previous Track"
+    
+    // Shortcuts
+    case commandQ = "Quit App (Cmd+Q)"
+    case control1 = "Control + 1"
+    case control2 = "Control + 2"
+    case control3 = "Control + 3"
+    case control4 = "Control + 4"
+    case control5 = "Control + 5"
+    case control6 = "Control + 6"
+    case control7 = "Control + 7"
+    case control8 = "Control + 8"
 }
 
 // GestureSettings struct to hold configuration for each direction
 struct GestureSettings: Codable {
-    var mode: ActionMode = .brightness
+    var mode: ActionMode = .preset
+    var preset: PresetAction = .brightnessUp
     var sensitivity: Double = 0.7 // Default to ~Normal (0.15 threshold)
     var recordedKeyCode: Int?
     var recordedModifiers: Int = 0 // Store raw value for Codable simplicity
@@ -23,10 +49,10 @@ class ActionController: ObservableObject {
     
     // Dictionary to hold settings for each direction
     @Published var gestureSettings: [GestureDirection: GestureSettings] = [
-        .up: GestureSettings(mode: .brightness),
-        .down: GestureSettings(mode: .shortcut),
-        .left: GestureSettings(mode: .shortcut),
-        .right: GestureSettings(mode: .shortcut)
+        .up: GestureSettings(mode: .preset, preset: .brightnessUp),
+        .down: GestureSettings(mode: .preset, preset: .brightnessDown),
+        .left: GestureSettings(mode: .preset, preset: .volumeDown),
+        .right: GestureSettings(mode: .preset, preset: .volumeUp)
     ]
     
     // Current direction being configured (for UI)
@@ -70,16 +96,49 @@ class ActionController: ObservableObject {
         print("Triggering Action for \(direction.rawValue): \(settings.mode.rawValue)")
         
         switch settings.mode {
-        case .brightness:
-            increaseBrightness()
+        case .preset:
+            triggerPreset(settings.preset)
         case .shortcut:
             triggerShortcut(settings: settings)
         }
     }
     
-    private func increaseBrightness() {
-        print("Triggering Brightness (System Code 2)")
-        simulateSystemKey(code: 2)
+    private func triggerPreset(_ action: PresetAction) {
+        switch action {
+        // System
+        case .brightnessUp: simulateSystemKey(code: 2) // NX_KEYTYPE_BRIGHTNESS_UP
+        case .brightnessDown: simulateSystemKey(code: 3) // NX_KEYTYPE_BRIGHTNESS_DOWN
+        case .volumeUp: simulateSystemKey(code: 0) // NX_KEYTYPE_SOUND_UP
+        case .volumeDown: simulateSystemKey(code: 1) // NX_KEYTYPE_SOUND_DOWN
+        case .mute: simulateSystemKey(code: 7) // NX_KEYTYPE_MUTE
+            
+        // Media
+        case .playPause: simulateSystemKey(code: 16) // NX_KEYTYPE_PLAY
+        case .nextTrack: simulateSystemKey(code: 17) // NX_KEYTYPE_NEXT
+        case .previousTrack: simulateSystemKey(code: 18) // NX_KEYTYPE_PREVIOUS
+            
+        // Shortcuts
+        case .commandQ: simulateStandardShortcut(keyCode: 12, modifiers: .maskCommand) // Q
+        case .control1: simulateStandardShortcut(keyCode: 18, modifiers: .maskControl) // 1
+        case .control2: simulateStandardShortcut(keyCode: 19, modifiers: .maskControl) // 2
+        case .control3: simulateStandardShortcut(keyCode: 20, modifiers: .maskControl) // 3
+        case .control4: simulateStandardShortcut(keyCode: 21, modifiers: .maskControl) // 4
+        case .control5: simulateStandardShortcut(keyCode: 23, modifiers: .maskControl) // 5
+        case .control6: simulateStandardShortcut(keyCode: 22, modifiers: .maskControl) // 6
+        case .control7: simulateStandardShortcut(keyCode: 26, modifiers: .maskControl) // 7
+        case .control8: simulateStandardShortcut(keyCode: 28, modifiers: .maskControl) // 8
+        }
+    }
+    
+    private func simulateStandardShortcut(keyCode: CGKeyCode, modifiers: CGEventFlags) {
+        guard let down = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: true),
+              let up = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: false) else { return }
+        
+        down.flags = modifiers
+        up.flags = modifiers
+        
+        down.post(tap: .cghidEventTap)
+        up.post(tap: .cghidEventTap)
     }
     
     private func triggerShortcut(settings: GestureSettings) {
@@ -97,16 +156,7 @@ class ActionController: ObservableObject {
         if modifiers.contains(.control) { cgFlags.insert(.maskControl) }
         if modifiers.contains(.shift) { cgFlags.insert(.maskShift) }
         
-        let cgKeyCode = CGKeyCode(keyCode)
-        
-        guard let down = CGEvent(keyboardEventSource: nil, virtualKey: cgKeyCode, keyDown: true),
-              let up = CGEvent(keyboardEventSource: nil, virtualKey: cgKeyCode, keyDown: false) else { return }
-        
-        down.flags = cgFlags
-        up.flags = cgFlags
-        
-        down.post(tap: .cghidEventTap)
-        up.post(tap: .cghidEventTap)
+        simulateStandardShortcut(keyCode: CGKeyCode(keyCode), modifiers: cgFlags)
     }
     
     private func simulateSystemKey(code: Int) {
@@ -195,6 +245,19 @@ class ActionController: ObservableObject {
            let decoded = try? JSONDecoder().decode([GestureDirection: GestureSettings].self, from: data) {
             gestureSettings = decoded
         }
+    }
+    
+    // Helper to update preset
+    func updatePreset(_ preset: PresetAction) {
+        var current = gestureSettings[selectedDirection] ?? GestureSettings()
+        current.preset = preset
+        
+        // Mutate dictionary
+        var newSettings = gestureSettings
+        newSettings[selectedDirection] = current
+        gestureSettings = newSettings
+        
+        saveSettings()
     }
     
     // Helper to update mode
