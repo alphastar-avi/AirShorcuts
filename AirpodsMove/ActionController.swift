@@ -3,27 +3,40 @@ import AppKit
 import Combine
 import Carbon
 
-enum ActionMode: String, CaseIterable {
+enum ActionMode: String, CaseIterable, Codable {
     case brightness = "Brightness"
     case shortcut = "Custom Shortcut"
 }
 
+// GestureSettings struct to hold configuration for each direction
+struct GestureSettings: Codable {
+    var mode: ActionMode = .brightness
+    var recordedKeyCode: Int?
+    var recordedModifiers: Int = 0 // Store raw value for Codable simplicity
+    var shortcutString: String = "None"
+}
+
 class ActionController: ObservableObject {
     @Published var isPermissionGranted: Bool = false
-    @Published var currentMode: ActionMode = .brightness
     @Published var isRecording: Bool = false
-    @Published var recordedShortcutString: String = "None"
+    
+    // Dictionary to hold settings for each direction
+    @Published var gestureSettings: [GestureDirection: GestureSettings] = [
+        .up: GestureSettings(mode: .brightness),
+        .down: GestureSettings(mode: .shortcut),
+        .left: GestureSettings(mode: .shortcut),
+        .right: GestureSettings(mode: .shortcut)
+    ]
+    
+    // Current direction being configured (for UI)
+    @Published var selectedDirection: GestureDirection = .up
     
     private var monitor: Any?
-    private let kSavedKeyCode = "savedKeyCode"
-    private let kSavedModifiers = "savedModifiers"
-    
-    var recordedKeyCode: Int?
-    var recordedModifiers: NSEvent.ModifierFlags = []
+    private let kSavedSettings = "savedGestureSettings"
     
     init() {
         checkPermission()
-        loadShortcut()
+        loadSettings()
     }
     
     func checkPermission() {
@@ -44,18 +57,22 @@ class ActionController: ObservableObject {
     
     // MARK: - Triggering
     
-    func triggerAction() {
+    func triggerAction(for direction: GestureDirection) {
         checkPermission()
         if !isPermissionGranted {
             print("Permission missing")
             return
         }
         
-        switch currentMode {
+        guard let settings = gestureSettings[direction] else { return }
+        
+        print("Triggering Action for \(direction.rawValue): \(settings.mode.rawValue)")
+        
+        switch settings.mode {
         case .brightness:
             increaseBrightness()
         case .shortcut:
-            triggerShortcut()
+            triggerShortcut(settings: settings)
         }
     }
     
@@ -64,20 +81,20 @@ class ActionController: ObservableObject {
         simulateSystemKey(code: 2)
     }
     
-    private func triggerShortcut() {
-        guard let keyCode = recordedKeyCode else {
-            print("No shortcut recorded")
+    private func triggerShortcut(settings: GestureSettings) {
+        guard let keyCode = settings.recordedKeyCode else {
+            print("No shortcut recorded for this direction")
             return
         }
         
-        print("Triggering Shortcut: Code \(keyCode), Mods \(recordedModifiers)")
+        let modifiers = NSEvent.ModifierFlags(rawValue: UInt(settings.recordedModifiers))
+        print("Triggering Shortcut: Code \(keyCode), Mods \(modifiers)")
         
-        // Create CGEventFlags from NSEvent.ModifierFlags
         var cgFlags = CGEventFlags()
-        if recordedModifiers.contains(.command) { cgFlags.insert(.maskCommand) }
-        if recordedModifiers.contains(.option) { cgFlags.insert(.maskAlternate) }
-        if recordedModifiers.contains(.control) { cgFlags.insert(.maskControl) }
-        if recordedModifiers.contains(.shift) { cgFlags.insert(.maskShift) }
+        if modifiers.contains(.command) { cgFlags.insert(.maskCommand) }
+        if modifiers.contains(.option) { cgFlags.insert(.maskAlternate) }
+        if modifiers.contains(.control) { cgFlags.insert(.maskControl) }
+        if modifiers.contains(.shift) { cgFlags.insert(.maskShift) }
         
         let cgKeyCode = CGKeyCode(keyCode)
         
@@ -107,7 +124,14 @@ class ActionController: ObservableObject {
     
     func startRecording() {
         isRecording = true
-        recordedShortcutString = "Press keys..."
+        // Update string to indicate recording
+        var current = gestureSettings[selectedDirection] ?? GestureSettings()
+        current.shortcutString = "Press keys..."
+        
+        // Mutate dictionary
+        var newSettings = gestureSettings
+        newSettings[selectedDirection] = current
+        gestureSettings = newSettings
         
         monitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             self?.handleEvent(event)
@@ -124,14 +148,21 @@ class ActionController: ObservableObject {
     }
     
     private func handleEvent(_ event: NSEvent) {
-        // Ignore standalone modifiers
         if isModifier(event.keyCode) { return }
         
-        recordedKeyCode = Int(event.keyCode)
-        recordedModifiers = event.modifierFlags.intersection(.deviceIndependentFlagsMask)
+        var current = gestureSettings[selectedDirection] ?? GestureSettings()
+        current.recordedKeyCode = Int(event.keyCode)
+        current.recordedModifiers = Int(event.modifierFlags.intersection(.deviceIndependentFlagsMask).rawValue)
         
-        saveShortcut()
-        updateShortcutString()
+        // Update string
+        current.shortcutString = formatShortcut(code: current.recordedKeyCode!, modifiers: current.recordedModifiers)
+        
+        // Mutate dictionary
+        var newSettings = gestureSettings
+        newSettings[selectedDirection] = current
+        gestureSettings = newSettings
+        
+        saveSettings()
         stopRecording()
     }
     
@@ -139,34 +170,42 @@ class ActionController: ObservableObject {
         return [54, 55, 56, 57, 58, 59, 60, 61, 62, 63].contains(code)
     }
     
-    private func saveShortcut() {
-        UserDefaults.standard.set(recordedKeyCode, forKey: kSavedKeyCode)
-        UserDefaults.standard.set(recordedModifiers.rawValue, forKey: kSavedModifiers)
-    }
-    
-    private func loadShortcut() {
-        if let code = UserDefaults.standard.object(forKey: kSavedKeyCode) as? Int {
-            recordedKeyCode = code
-            let rawMods = UserDefaults.standard.integer(forKey: kSavedModifiers)
-            recordedModifiers = NSEvent.ModifierFlags(rawValue: UInt(rawMods))
-            updateShortcutString()
-        }
-    }
-    
-    private func updateShortcutString() {
-        guard let code = recordedKeyCode else {
-            recordedShortcutString = "None"
-            return
-        }
-        
+    private func formatShortcut(code: Int, modifiers: Int) -> String {
+        let mods = NSEvent.ModifierFlags(rawValue: UInt(modifiers))
         var str = ""
-        if recordedModifiers.contains(.control) { str += "⌃" }
-        if recordedModifiers.contains(.option) { str += "⌥" }
-        if recordedModifiers.contains(.shift) { str += "⇧" }
-        if recordedModifiers.contains(.command) { str += "⌘" }
+        if mods.contains(.control) { str += "⌃" }
+        if mods.contains(.option) { str += "⌥" }
+        if mods.contains(.shift) { str += "⇧" }
+        if mods.contains(.command) { str += "⌘" }
+        str += "\(code)"
+        return str
+    }
+    
+    // MARK: - Persistence
+    
+    private func saveSettings() {
+        if let encoded = try? JSONEncoder().encode(gestureSettings) {
+            UserDefaults.standard.set(encoded, forKey: kSavedSettings)
+        }
+    }
+    
+    private func loadSettings() {
+        if let data = UserDefaults.standard.data(forKey: kSavedSettings),
+           let decoded = try? JSONDecoder().decode([GestureDirection: GestureSettings].self, from: data) {
+            gestureSettings = decoded
+        }
+    }
+    
+    // Helper to update mode
+    func updateMode(_ mode: ActionMode) {
+        var current = gestureSettings[selectedDirection] ?? GestureSettings()
+        current.mode = mode
         
-        // Simple mapping for demo, real app would use TIS functions
-        str += "\(code)" 
-        recordedShortcutString = str
+        // Mutate dictionary
+        var newSettings = gestureSettings
+        newSettings[selectedDirection] = current
+        gestureSettings = newSettings
+        
+        saveSettings()
     }
 }
