@@ -92,7 +92,7 @@ struct ContentView: View {
                     .padding(.bottom)
                 }
                 
-                Spacer()
+
                 
                 // Main Toggle
                 Button(action: {
