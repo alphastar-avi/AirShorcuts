@@ -12,6 +12,7 @@ struct AirpodsMoveApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .navigationTitle("Air Shortcuts")
         }
     }
 }

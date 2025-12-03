@@ -35,6 +35,7 @@ enum PresetAction: String, CaseIterable, Codable {
 
 // GestureSettings struct to hold configuration for each direction
 struct GestureSettings: Codable {
+    var isEnabled: Bool = true
     var mode: ActionMode = .preset
     var preset: PresetAction = .brightnessUp
     var sensitivity: Double = 0.7 // Default to ~Normal (0.15 threshold)
@@ -91,7 +92,7 @@ class ActionController: ObservableObject {
             return
         }
         
-        guard let settings = gestureSettings[direction] else { return }
+        guard let settings = gestureSettings[direction], settings.isEnabled else { return }
         
         print("Triggering Action for \(direction.rawValue): \(settings.mode.rawValue)")
         
@@ -281,6 +282,19 @@ class ActionController: ObservableObject {
         // Mutate dictionary
         var newSettings = gestureSettings
         newSettings[selectedDirection] = current
+        gestureSettings = newSettings
+        
+        saveSettings()
+    }
+    
+    // Helper to toggle gesture
+    func toggleGesture(for direction: GestureDirection) {
+        var current = gestureSettings[direction] ?? GestureSettings()
+        current.isEnabled.toggle()
+        
+        // Mutate dictionary
+        var newSettings = gestureSettings
+        newSettings[direction] = current
         gestureSettings = newSettings
         
         saveSettings()
