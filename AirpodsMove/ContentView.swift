@@ -39,28 +39,47 @@ struct ContentView: View {
                     Spacer()
                     
                     // Right: Status
-                    ZStack {
-                        if let lastGesture = motionViewModel.lastDetectedGesture {
-                            Text("\(lastGesture.rawValue)!")
-                                .font(.title3.bold())
-                                .foregroundColor(.green)
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 16)
-                                .background(Color.green.opacity(0.1))
-                                .cornerRadius(12)
-                                .transition(.scale.combined(with: .opacity))
-                                .onAppear {
-                                    actionController.triggerAction(for: lastGesture)
-                                }
-                        } else {
-                            Text("Waiting for gestures...")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 12)
-                                .background(Color.secondary.opacity(0.1))
-                                .cornerRadius(12)
+                    VStack(alignment: .trailing, spacing: 8) {
+                        ZStack {
+                            if let lastGesture = motionViewModel.lastDetectedGesture {
+                                Text("\(lastGesture.rawValue)!")
+                                    .font(.title3.bold())
+                                    .foregroundColor(.green)
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 16)
+                                    .background(Color.green.opacity(0.1))
+                                    .cornerRadius(12)
+                                    .transition(.scale.combined(with: .opacity))
+                                    .onAppear {
+                                        actionController.triggerAction(for: lastGesture)
+                                    }
+                            } else {
+                                Text("Waiting for gestures...")
+                                    .font(.headline)
+                                    .foregroundColor(.secondary)
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 12)
+                                    .background(Color.secondary.opacity(0.1))
+                                    .cornerRadius(12)
+                            }
                         }
+                        
+                        // Connection Status
+                        HStack(spacing: 6) {
+                            Circle()
+                                .fill(motionViewModel.isConnected ? Color.green : Color.red)
+                                .frame(width: 8, height: 8)
+                            
+                            Text(motionViewModel.isConnected ? "AirPods Connected" : "AirPods Not Detected")
+                                .font(.caption)
+                                .foregroundColor(motionViewModel.isConnected ? .green : .red)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            (motionViewModel.isConnected ? Color.green : Color.red).opacity(0.1)
+                        )
+                        .cornerRadius(8)
                     }
                 }
                 .padding(.horizontal)
@@ -130,7 +149,7 @@ struct ContentView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 .padding(.horizontal)
-                .padding(.bottom, 20)
+                .padding(.vertical, 20)
                 
                 // Permissions Warning
                 if !actionController.isPermissionGranted {
@@ -205,7 +224,7 @@ struct GestureWidget: View {
             .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
             .overlay(
                 RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color.white.opacity(0.2), lineWidth: 1)
+                    .stroke(Color.primary.opacity(0.2), lineWidth: 1) // Adaptive border
             )
             .opacity(settings.isEnabled ? 1.0 : 0.6) // Dim if disabled
             

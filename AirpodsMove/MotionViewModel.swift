@@ -9,13 +9,14 @@ enum GestureDirection: String, CaseIterable, Codable {
     case right = "Right"
 }
 
-class MotionViewModel: ObservableObject {
+class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDelegate {
     private let motionManager = CMHeadphoneMotionManager()
     
     @Published var pitch: Double = 0.0
     @Published var yaw: Double = 0.0
     @Published var lastDetectedGesture: GestureDirection?
     @Published var isListening = false
+    @Published var isConnected = false
     
     // Thresholds for each direction (default to 0.15)
     var thresholds: [GestureDirection: Double] = [
@@ -29,12 +30,18 @@ class MotionViewModel: ObservableObject {
     private var previousYaw: Double?
     private var baselineYaw: Double?
     
+    override init() {
+        super.init()
+        motionManager.delegate = self
+        isConnected = motionManager.isDeviceMotionAvailable
+    }
+    
     func updateThresholds(settings: [GestureDirection: GestureSettings]) {
         for (direction, setting) in settings {
-            // Formula: Threshold = 0.40 - (Sensitivity * 0.35)
+            // Formula: Threshold = 0.40 - (Sensitivity * 0.38)
             // Sensitivity 0.0 (Low) -> 0.40 (Hard)
-            // Sensitivity 1.0 (High) -> 0.05 (Easy)
-            let threshold = 0.40 - (setting.sensitivity * 0.35)
+            // Sensitivity 1.0 (High) -> 0.02 (Very Easy)
+            let threshold = 0.40 - (setting.sensitivity * 0.38)
             thresholds[direction] = threshold
         }
     }
@@ -112,5 +119,19 @@ class MotionViewModel: ObservableObject {
         previousYaw = nil
         baselineYaw = nil
         isListening = false
+    }
+    
+    // MARK: - CMHeadphoneMotionManagerDelegate
+    
+    func headphoneMotionManagerDidConnect(_ manager: CMHeadphoneMotionManager) {
+        DispatchQueue.main.async {
+            self.isConnected = true
+        }
+    }
+    
+    func headphoneMotionManagerDidDisconnect(_ manager: CMHeadphoneMotionManager) {
+        DispatchQueue.main.async {
+            self.isConnected = false
+        }
     }
 }
