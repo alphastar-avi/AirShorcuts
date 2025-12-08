@@ -18,6 +18,7 @@ class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDeleg
     @Published var lastDetectedGesture: GestureDirection?
     @Published var isListening = false
     @Published var isConnected = false
+    @Published var isAlarmTriggered = false
     
     // Thresholds for each direction (default to 0.15)
     var thresholds: [GestureDirection: Double] = [
@@ -31,6 +32,7 @@ class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDeleg
     var wakeMeSettings: WakeMeSettings = WakeMeSettings()
     private var lastActivityTime: Date = Date()
     private var wakeMeTimer: Timer?
+    private var alarmSound: NSSound?
     
     private var previousPitch: Double?
     private var previousYaw: Double?
@@ -121,11 +123,27 @@ class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDeleg
     }
     
     private func playAlertSound() {
+        guard !isAlarmTriggered else { return } // Don't restart if already playing
+        
+        isAlarmTriggered = true
         if let sound = NSSound(named: wakeMeSettings.soundName) {
+            sound.loops = true
             sound.play()
+            alarmSound = sound
         } else {
-            NSSound.beep()
+            // Fallback
+            let sound = NSSound(named: "Ping")
+            sound?.loops = true
+            sound?.play()
+            alarmSound = sound
         }
+    }
+    
+    func resetAlarm() {
+        alarmSound?.stop()
+        alarmSound = nil
+        isAlarmTriggered = false
+        lastActivityTime = Date()
     }
     
     private func detectGestures(currentPitch: Double, currentYaw: Double) {
@@ -137,9 +155,10 @@ class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDeleg
         let deltaY = abs(currentYaw - prevYaw)
         
         // Activity Threshold:
-        // Sensitivity 0.0 -> Needs 0.10 movement to count as activity
-        // Sensitivity 1.0 -> Needs 0.01 movement
-        let activityThreshold = 0.10 - (wakeMeSettings.sensitivity * 0.09)
+        // Expanded Range:
+        // Sensitivity 0.0 -> Needs 0.30 movement (Significant head shake)
+        // Sensitivity 1.0 -> Needs 0.01 movement (Tiny micro-movement)
+        let activityThreshold = 0.30 - (wakeMeSettings.sensitivity * 0.29)
         
         if deltaP > activityThreshold || deltaY > activityThreshold {
             lastActivityTime = Date()
@@ -185,6 +204,7 @@ class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDeleg
         isListening = false
         wakeMeTimer?.invalidate()
         wakeMeTimer = nil
+        resetAlarm()
     }
     
     // MARK: - CMHeadphoneMotionManagerDelegate

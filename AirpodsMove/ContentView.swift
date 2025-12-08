@@ -116,7 +116,7 @@ struct ContentView: View {
                     .padding(.bottom)
                     
                     // Wake Me Widget
-                    WakeMeWidget(actionController: actionController)
+                    WakeMeWidget(actionController: actionController, motionViewModel: motionViewModel)
                         .padding(.horizontal)
                         .padding(.bottom)
                 }
@@ -449,6 +449,7 @@ struct PermissionWarningView: View {
 // Wake Me Widget
 struct WakeMeWidget: View {
     @ObservedObject var actionController: ActionController
+    @ObservedObject var motionViewModel: MotionViewModel
     @State private var showingConfig = false
     
     var settings: WakeMeSettings {
@@ -457,68 +458,105 @@ struct WakeMeWidget: View {
     
     var body: some View {
         ZStack(alignment: .topLeading) {
-            HStack(spacing: 20) {
-                // Icon Area
-                ZStack {
-                    Circle()
-                        .fill(settings.isEnabled ? Color.orange.opacity(0.1) : Color.gray.opacity(0.1))
-                        .frame(width: 60, height: 60)
-                    
-                    Image(systemName: "alarm.fill")
-                        .font(.system(size: 28, weight: .semibold))
-                        .foregroundColor(settings.isEnabled ? .orange : .gray)
-                }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("Wake Me")
-                        .font(.headline)
-                        .foregroundColor(settings.isEnabled ? .primary : .secondary)
-                    
-                    if settings.isEnabled {
-                        Text("Alert after \(formatDuration(settings.timeout))")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    } else {
-                        Text("Disabled")
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                    }
-                }
-                
-                Spacer()
-                
-                // Toggle Switch
-                Button(action: {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        actionController.toggleWakeMe()
-                    }
-                }) {
-                    ZStack(alignment: settings.isEnabled ? .trailing : .leading) {
-                        Capsule()
-                            .fill(settings.isEnabled ? Color.green : Color.red)
-                            .frame(width: 36, height: 20)
+            if motionViewModel.isAlarmTriggered {
+                // Alarm Triggered State
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("WAKE UP!")
+                            .font(.title.bold())
+                            .foregroundColor(.white)
                         
-                        Circle()
-                            .fill(Color.white)
-                            .frame(width: 16, height: 16)
-                            .padding(2)
-                            .shadow(radius: 1)
+                        Text("No activity detected.")
+                            .font(.subheadline)
+                            .foregroundColor(.white.opacity(0.8))
                     }
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        motionViewModel.resetAlarm()
+                    }) {
+                        Text("Reset Alarm")
+                            .fontWeight(.bold)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 10)
+                            .background(Color.white)
+                            .foregroundColor(.red)
+                            .cornerRadius(10)
+                            .shadow(radius: 5)
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
-                .buttonStyle(PlainButtonStyle())
-            }
-            .padding(20)
-            .frame(maxWidth: .infinity)
-            .background(.ultraThinMaterial)
-            .cornerRadius(20)
-            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
-            .overlay(
-                RoundedRectangle(cornerRadius: 20)
-                    .stroke(Color.primary.opacity(0.2), lineWidth: 1)
-            )
-            .opacity(settings.isEnabled ? 1.0 : 0.6)
-            .onTapGesture {
-                showingConfig = true
+                .padding(20)
+                .frame(maxWidth: .infinity)
+                .background(Color.red)
+                .cornerRadius(20)
+                .shadow(color: Color.red.opacity(0.5), radius: 10, x: 0, y: 5)
+            } else {
+                // Normal State
+                HStack(spacing: 20) {
+                    // Icon Area
+                    ZStack {
+                        Circle()
+                            .fill(settings.isEnabled ? Color.orange.opacity(0.1) : Color.gray.opacity(0.1))
+                            .frame(width: 60, height: 60)
+                        
+                        Image(systemName: "alarm.fill")
+                            .font(.system(size: 28, weight: .semibold))
+                            .foregroundColor(settings.isEnabled ? .orange : .gray)
+                    }
+                    
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Wake Me")
+                            .font(.headline)
+                            .foregroundColor(settings.isEnabled ? .primary : .secondary)
+                        
+                        if settings.isEnabled {
+                            Text("Alert after \(formatDuration(settings.timeout))")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        } else {
+                            Text("Disabled")
+                                .font(.subheadline)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    
+                    Spacer()
+                    
+                    // Toggle Switch
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            actionController.toggleWakeMe()
+                        }
+                    }) {
+                        ZStack(alignment: settings.isEnabled ? .trailing : .leading) {
+                            Capsule()
+                                .fill(settings.isEnabled ? Color.green : Color.red)
+                                .frame(width: 36, height: 20)
+                            
+                            Circle()
+                                .fill(Color.white)
+                                .frame(width: 16, height: 16)
+                                .padding(2)
+                                .shadow(radius: 1)
+                        }
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
+                .padding(20)
+                .frame(maxWidth: .infinity)
+                .background(.ultraThinMaterial)
+                .cornerRadius(20)
+                .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20)
+                        .stroke(Color.primary.opacity(0.2), lineWidth: 1)
+                )
+                .opacity(settings.isEnabled ? 1.0 : 0.6)
+                .onTapGesture {
+                    showingConfig = true
+                }
             }
         }
         .sheet(isPresented: $showingConfig) {
@@ -603,12 +641,12 @@ struct WakeMeConfigSheet: View {
                     Picker("Minutes", selection: $minutes) {
                         ForEach(0...59, id: \.self) { Text("\($0) min").tag($0) }
                     }
-                    .frame(width: 100)
+                    .frame(width: 120)
                     
                     Picker("Seconds", selection: $seconds) {
                         ForEach(0...59, id: \.self) { Text("\($0) sec").tag($0) }
                     }
-                    .frame(width: 100)
+                    .frame(width: 120)
                 }
                 .pickerStyle(MenuPickerStyle())
             }
