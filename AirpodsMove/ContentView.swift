@@ -585,6 +585,9 @@ struct WakeMeConfigSheet: View {
     @State private var seconds: Int
     @State private var soundName: String
     
+    @State private var previewSound: NSSound?
+    @State private var previewTimer: Timer?
+    
     let systemSounds = ["Ping", "Basso", "Blow", "Bottle", "Frog", "Funk", "Glass", "Hero", "Morse", "Pop", "Purr", "Sosumi", "Submarine", "Tink"]
     
     let ringtones = [
@@ -680,13 +683,29 @@ struct WakeMeConfigSheet: View {
                 }
                 .pickerStyle(MenuPickerStyle())
                 .onChange(of: soundName) { newSound in
+                    // Stop previous preview
+                    previewSound?.stop()
+                    previewTimer?.invalidate()
+                    
                     // Preview sound
                     let ringtonePath = "/System/Library/PrivateFrameworks/ToneLibrary.framework/Versions/A/Resources/Ringtones/\(newSound).m4r"
+                    var soundToPlay: NSSound?
+                    
                     if FileManager.default.fileExists(atPath: ringtonePath) {
                         let url = URL(fileURLWithPath: ringtonePath)
-                        NSSound(contentsOf: url, byReference: true)?.play()
+                        soundToPlay = NSSound(contentsOf: url, byReference: true)
                     } else {
-                        NSSound(named: newSound)?.play()
+                        soundToPlay = NSSound(named: newSound)
+                    }
+                    
+                    if let sound = soundToPlay {
+                        sound.play()
+                        previewSound = sound
+                        
+                        // Stop after 4 seconds
+                        previewTimer = Timer.scheduledTimer(withTimeInterval: 4.0, repeats: false) { _ in
+                            sound.stop()
+                        }
                     }
                 }
             }
@@ -695,6 +714,10 @@ struct WakeMeConfigSheet: View {
             Spacer()
             
             Button("Done") {
+                // Stop preview
+                previewSound?.stop()
+                previewTimer?.invalidate()
+                
                 // Save settings
                 var newSettings = actionController.wakeMeSettings
                 newSettings.sensitivity = sensitivity
