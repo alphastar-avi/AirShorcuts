@@ -585,7 +585,11 @@ struct WakeMeConfigSheet: View {
     @State private var seconds: Int
     @State private var soundName: String
     
-    let sounds = ["Ping", "Basso", "Blow", "Bottle", "Frog", "Funk", "Glass", "Hero", "Morse", "Pop", "Purr", "Sosumi", "Submarine", "Tink"]
+    let systemSounds = ["Ping", "Basso", "Blow", "Bottle", "Frog", "Funk", "Glass", "Hero", "Morse", "Pop", "Purr", "Sosumi", "Submarine", "Tink"]
+    
+    let ringtones = [
+        "Radar", "Apex", "Beacon", "Chimes", "Circuit", "Constellation", "Cosmic", "Crystals", "Hillside", "Illuminate", "Night Owl", "Opening", "Playtime", "Presto", "Radiate", "Ripples", "Sencha", "Signal", "Silk", "Slow Rise", "Stargaze", "Summit", "Twinkle", "Uplift", "Waves", "By The Seaside"
+    ]
     
     init(actionController: ActionController) {
         self.actionController = actionController
@@ -662,13 +666,28 @@ struct WakeMeConfigSheet: View {
                     .font(.headline)
                 
                 Picker("Sound", selection: $soundName) {
-                    ForEach(sounds, id: \.self) { sound in
-                        Text(sound).tag(sound)
+                    Section(header: Text("Alarms")) {
+                        ForEach(ringtones, id: \.self) { sound in
+                            Text(sound).tag(sound)
+                        }
+                    }
+                    
+                    Section(header: Text("System Sounds")) {
+                        ForEach(systemSounds, id: \.self) { sound in
+                            Text(sound).tag(sound)
+                        }
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
                 .onChange(of: soundName) { newSound in
-                    NSSound(named: newSound)?.play()
+                    // Preview sound
+                    let ringtonePath = "/System/Library/PrivateFrameworks/ToneLibrary.framework/Versions/A/Resources/Ringtones/\(newSound).m4r"
+                    if FileManager.default.fileExists(atPath: ringtonePath) {
+                        let url = URL(fileURLWithPath: ringtonePath)
+                        NSSound(contentsOf: url, byReference: true)?.play()
+                    } else {
+                        NSSound(named: newSound)?.play()
+                    }
                 }
             }
             .padding(.horizontal)
@@ -688,7 +707,7 @@ struct WakeMeConfigSheet: View {
             .keyboardShortcut(.defaultAction)
             .padding(.bottom)
         }
-        .frame(width: 350, height: 500)
+        .frame(width: 350, height: 600) // Increased height for more options
         .background(.ultraThinMaterial)
     }
 }

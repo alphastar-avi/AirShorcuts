@@ -126,12 +126,27 @@ class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDeleg
         guard !isAlarmTriggered else { return } // Don't restart if already playing
         
         isAlarmTriggered = true
+        
+        // Check if it's a ringtone (we'll assume anything not in the standard system sound list is a ringtone for now, or check file existence)
+        let ringtonePath = "/System/Library/PrivateFrameworks/ToneLibrary.framework/Versions/A/Resources/Ringtones/\(wakeMeSettings.soundName).m4r"
+        
+        if FileManager.default.fileExists(atPath: ringtonePath) {
+            let url = URL(fileURLWithPath: ringtonePath)
+            if let sound = NSSound(contentsOf: url, byReference: true) {
+                sound.loops = true
+                sound.play()
+                alarmSound = sound
+                return
+            }
+        }
+        
+        // Fallback to standard system sound
         if let sound = NSSound(named: wakeMeSettings.soundName) {
             sound.loops = true
             sound.play()
             alarmSound = sound
         } else {
-            // Fallback
+            // Ultimate Fallback
             let sound = NSSound(named: "Ping")
             sound?.loops = true
             sound?.play()
