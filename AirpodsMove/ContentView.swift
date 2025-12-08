@@ -114,6 +114,11 @@ struct ContentView: View {
                     }
                     .padding(.horizontal)
                     .padding(.bottom)
+                    
+                    // Wake Me Widget
+                    WakeMeWidget(actionController: actionController)
+                        .padding(.horizontal)
+                        .padding(.bottom)
                 }
                 
 
@@ -163,9 +168,19 @@ struct ContentView: View {
         .onAppear {
             actionController.checkPermission()
             motionViewModel.updateThresholds(settings: actionController.gestureSettings)
+            motionViewModel.updateWakeMeSettings(actionController.wakeMeSettings)
         }
         .onChange(of: actionController.gestureSettings.values.map { $0.sensitivity }) { _ in
             motionViewModel.updateThresholds(settings: actionController.gestureSettings)
+        }
+        .onChange(of: actionController.wakeMeSettings.sensitivity) { _ in
+            motionViewModel.updateWakeMeSettings(actionController.wakeMeSettings)
+        }
+        .onChange(of: actionController.wakeMeSettings.timeout) { _ in
+            motionViewModel.updateWakeMeSettings(actionController.wakeMeSettings)
+        }
+        .onChange(of: actionController.wakeMeSettings.isEnabled) { _ in
+            motionViewModel.updateWakeMeSettings(actionController.wakeMeSettings)
         }
         .sheet(isPresented: $showingConfigSheet) {
             ConfigurationSheet(actionController: actionController)
@@ -428,6 +443,213 @@ struct PermissionWarningView: View {
             RoundedRectangle(cornerRadius: 15)
                 .stroke(Color.orange.opacity(0.3), lineWidth: 1)
         )
+    }
+}
+
+// Wake Me Widget
+struct WakeMeWidget: View {
+    @ObservedObject var actionController: ActionController
+    @State private var showingConfig = false
+    
+    var settings: WakeMeSettings {
+        actionController.wakeMeSettings
+    }
+    
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            HStack(spacing: 20) {
+                // Icon Area
+                ZStack {
+                    Circle()
+                        .fill(settings.isEnabled ? Color.orange.opacity(0.1) : Color.gray.opacity(0.1))
+                        .frame(width: 60, height: 60)
+                    
+                    Image(systemName: "alarm.fill")
+                        .font(.system(size: 28, weight: .semibold))
+                        .foregroundColor(settings.isEnabled ? .orange : .gray)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Wake Me")
+                        .font(.headline)
+                        .foregroundColor(settings.isEnabled ? .primary : .secondary)
+                    
+                    if settings.isEnabled {
+                        Text("Alert after \(formatDuration(settings.timeout))")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    } else {
+                        Text("Disabled")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Spacer()
+                
+                // Toggle Switch
+                Button(action: {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        actionController.toggleWakeMe()
+                    }
+                }) {
+                    ZStack(alignment: settings.isEnabled ? .trailing : .leading) {
+                        Capsule()
+                            .fill(settings.isEnabled ? Color.green : Color.red)
+                            .frame(width: 36, height: 20)
+                        
+                        Circle()
+                            .fill(Color.white)
+                            .frame(width: 16, height: 16)
+                            .padding(2)
+                            .shadow(radius: 1)
+                    }
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+            .padding(20)
+            .frame(maxWidth: .infinity)
+            .background(.ultraThinMaterial)
+            .cornerRadius(20)
+            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+            .overlay(
+                RoundedRectangle(cornerRadius: 20)
+                    .stroke(Color.primary.opacity(0.2), lineWidth: 1)
+            )
+            .opacity(settings.isEnabled ? 1.0 : 0.6)
+            .onTapGesture {
+                showingConfig = true
+            }
+        }
+        .sheet(isPresented: $showingConfig) {
+            WakeMeConfigSheet(actionController: actionController)
+        }
+    }
+    
+    private func formatDuration(_ duration: TimeInterval) -> String {
+        let minutes = Int(duration) / 60
+        let seconds = Int(duration) % 60
+        if minutes > 0 {
+            return "\(minutes)m \(seconds)s"
+        } else {
+            return "\(seconds)s"
+        }
+    }
+}
+
+// Wake Me Config Sheet
+struct WakeMeConfigSheet: View {
+    @ObservedObject var actionController: ActionController
+    @Environment(\.presentationMode) var presentationMode
+    
+    @State private var sensitivity: Double
+    @State private var minutes: Int
+    @State private var seconds: Int
+    @State private var soundName: String
+    
+    let sounds = ["Ping", "Basso", "Blow", "Bottle", "Frog", "Funk", "Glass", "Hero", "Morse", "Pop", "Purr", "Sosumi", "Submarine", "Tink"]
+    
+    init(actionController: ActionController) {
+        self.actionController = actionController
+        _sensitivity = State(initialValue: actionController.wakeMeSettings.sensitivity)
+        _minutes = State(initialValue: Int(actionController.wakeMeSettings.timeout) / 60)
+        _seconds = State(initialValue: Int(actionController.wakeMeSettings.timeout) % 60)
+        _soundName = State(initialValue: actionController.wakeMeSettings.soundName)
+    }
+    
+    var body: some View {
+        VStack(spacing: 25) {
+            Text("Configure Wake Me")
+                .font(.title2.bold())
+                .padding(.top)
+            
+            Divider()
+            
+            // Sensitivity
+            VStack(alignment: .leading, spacing: 10) {
+                HStack {
+                    Label("Movement Sensitivity", systemImage: "slider.horizontal.3")
+                        .font(.headline)
+                    Spacer()
+                    Text(String(format: "%.2f", sensitivity))
+                        .font(.subheadline.monospacedDigit())
+                        .foregroundColor(.secondary)
+                        .padding(4)
+                        .background(Color.secondary.opacity(0.1))
+                        .cornerRadius(4)
+                }
+                
+                Slider(value: $sensitivity, in: 0.0...1.0)
+                    .tint(.orange)
+                
+                HStack {
+                    Text("Needs More Movement")
+                    Spacer()
+                    Text("Needs Less Movement")
+                }
+                .font(.caption)
+                .foregroundColor(.secondary)
+            }
+            .padding(.horizontal)
+            
+            Divider()
+            
+            // Timeout Picker
+            VStack(alignment: .leading, spacing: 10) {
+                Label("Timeout Duration", systemImage: "timer")
+                    .font(.headline)
+                
+                HStack {
+                    Picker("Minutes", selection: $minutes) {
+                        ForEach(0...59, id: \.self) { Text("\($0) min").tag($0) }
+                    }
+                    .frame(width: 100)
+                    
+                    Picker("Seconds", selection: $seconds) {
+                        ForEach(0...59, id: \.self) { Text("\($0) sec").tag($0) }
+                    }
+                    .frame(width: 100)
+                }
+                .pickerStyle(MenuPickerStyle())
+            }
+            .padding(.horizontal)
+            
+            Divider()
+            
+            // Sound Picker
+            VStack(alignment: .leading, spacing: 10) {
+                Label("Alert Sound", systemImage: "speaker.wave.2.fill")
+                    .font(.headline)
+                
+                Picker("Sound", selection: $soundName) {
+                    ForEach(sounds, id: \.self) { sound in
+                        Text(sound).tag(sound)
+                    }
+                }
+                .pickerStyle(MenuPickerStyle())
+                .onChange(of: soundName) { newSound in
+                    NSSound(named: newSound)?.play()
+                }
+            }
+            .padding(.horizontal)
+            
+            Spacer()
+            
+            Button("Done") {
+                // Save settings
+                var newSettings = actionController.wakeMeSettings
+                newSettings.sensitivity = sensitivity
+                newSettings.timeout = TimeInterval(minutes * 60 + seconds)
+                newSettings.soundName = soundName
+                actionController.updateWakeMeSettings(newSettings)
+                
+                presentationMode.wrappedValue.dismiss()
+            }
+            .keyboardShortcut(.defaultAction)
+            .padding(.bottom)
+        }
+        .frame(width: 350, height: 500)
+        .background(.ultraThinMaterial)
     }
 }
 

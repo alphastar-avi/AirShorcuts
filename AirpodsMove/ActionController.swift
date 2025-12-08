@@ -31,6 +31,22 @@ enum PresetAction: String, CaseIterable, Codable {
     case control6 = "Control + 6"
     case control7 = "Control + 7"
     case control8 = "Control + 8"
+    
+    // New Presets
+    case controlLeftArrow = "Control + Left Arrow"
+    case controlRightArrow = "Control + Right Arrow"
+    case shiftControlFnUp = "Shift + Control + Fn + Up"
+    case shiftControlFnDown = "Shift + Control + Fn + Down"
+    case shiftControlFnLeft = "Shift + Control + Fn + Left"
+    case shiftControlFnRight = "Shift + Control + Fn + Right"
+}
+
+// WakeMeSettings struct
+struct WakeMeSettings: Codable {
+    var isEnabled: Bool = false
+    var sensitivity: Double = 0.5 // 0.0 (Low) to 1.0 (High)
+    var timeout: TimeInterval = 60 // Default 1 minute
+    var soundName: String = "Ping"
 }
 
 // GestureSettings struct to hold configuration for each direction
@@ -48,6 +64,8 @@ class ActionController: ObservableObject {
     @Published var isPermissionGranted: Bool = false
     @Published var isRecording: Bool = false
     
+    @Published var wakeMeSettings: WakeMeSettings = WakeMeSettings()
+    
     // Dictionary to hold settings for each direction
     @Published var gestureSettings: [GestureDirection: GestureSettings] = [
         .up: GestureSettings(mode: .preset, preset: .brightnessUp),
@@ -61,6 +79,7 @@ class ActionController: ObservableObject {
     
     private var monitor: Any?
     private let kSavedSettings = "savedGestureSettings"
+    private let kSavedWakeMeSettings = "savedWakeMeSettings"
     
     init() {
         checkPermission()
@@ -103,7 +122,7 @@ class ActionController: ObservableObject {
             triggerShortcut(settings: settings)
         }
     }
-    
+
     private func triggerPreset(_ action: PresetAction) {
         switch action {
         // System
@@ -128,12 +147,28 @@ class ActionController: ObservableObject {
         case .control6: simulateStandardShortcut(keyCode: 22, modifiers: .maskControl) // 6
         case .control7: simulateStandardShortcut(keyCode: 26, modifiers: .maskControl) // 7
         case .control8: simulateStandardShortcut(keyCode: 28, modifiers: .maskControl) // 8
+            
+        // New Presets
+        case .controlLeftArrow: simulateStandardShortcut(keyCode: 123, modifiers: .maskControl) // Left Arrow
+        case .controlRightArrow: simulateStandardShortcut(keyCode: 124, modifiers: .maskControl) // Right Arrow
+            
+        // Fn + Arrow mappings:
+        // Fn + Up = Page Up (116)
+        // Fn + Down = Page Down (121)
+        // Fn + Left = Home (115)
+        // Fn + Right = End (119)
+        case .shiftControlFnUp: simulateStandardShortcut(keyCode: 116, modifiers: [.maskShift, .maskControl])
+        case .shiftControlFnDown: simulateStandardShortcut(keyCode: 121, modifiers: [.maskShift, .maskControl])
+        case .shiftControlFnLeft: simulateStandardShortcut(keyCode: 115, modifiers: [.maskShift, .maskControl])
+        case .shiftControlFnRight: simulateStandardShortcut(keyCode: 119, modifiers: [.maskShift, .maskControl])
         }
     }
     
     private func simulateStandardShortcut(keyCode: CGKeyCode, modifiers: CGEventFlags) {
-        guard let down = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: true),
-              let up = CGEvent(keyboardEventSource: nil, virtualKey: keyCode, keyDown: false) else { return }
+        let source = CGEventSource(stateID: .hidSystemState)
+        
+        guard let down = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: true),
+              let up = CGEvent(keyboardEventSource: source, virtualKey: keyCode, keyDown: false) else { return }
         
         down.flags = modifiers
         up.flags = modifiers
@@ -239,12 +274,19 @@ class ActionController: ObservableObject {
         if let encoded = try? JSONEncoder().encode(gestureSettings) {
             UserDefaults.standard.set(encoded, forKey: kSavedSettings)
         }
+        if let encodedWakeMe = try? JSONEncoder().encode(wakeMeSettings) {
+            UserDefaults.standard.set(encodedWakeMe, forKey: kSavedWakeMeSettings)
+        }
     }
     
     private func loadSettings() {
         if let data = UserDefaults.standard.data(forKey: kSavedSettings),
            let decoded = try? JSONDecoder().decode([GestureDirection: GestureSettings].self, from: data) {
             gestureSettings = decoded
+        }
+        if let data = UserDefaults.standard.data(forKey: kSavedWakeMeSettings),
+           let decoded = try? JSONDecoder().decode(WakeMeSettings.self, from: data) {
+            wakeMeSettings = decoded
         }
     }
     
@@ -297,6 +339,17 @@ class ActionController: ObservableObject {
         newSettings[direction] = current
         gestureSettings = newSettings
         
+        saveSettings()
+    }
+    
+    // Helper to update Wake Me Settings
+    func updateWakeMeSettings(_ settings: WakeMeSettings) {
+        wakeMeSettings = settings
+        saveSettings()
+    }
+    
+    func toggleWakeMe() {
+        wakeMeSettings.isEnabled.toggle()
         saveSettings()
     }
 }

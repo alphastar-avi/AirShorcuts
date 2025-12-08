@@ -1,6 +1,7 @@
 import Foundation
 import CoreMotion
 import Combine
+import AppKit
 
 enum GestureDirection: String, CaseIterable, Codable {
     case up = "Up"
@@ -26,6 +27,11 @@ class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDeleg
         .right: 0.15
     ]
     
+    // Wake Me State
+    var wakeMeSettings: WakeMeSettings = WakeMeSettings()
+    private var lastActivityTime: Date = Date()
+    private var wakeMeTimer: Timer?
+    
     private var previousPitch: Double?
     private var previousYaw: Double?
     private var baselineYaw: Double?
@@ -46,6 +52,15 @@ class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDeleg
         }
     }
     
+    func updateWakeMeSettings(_ settings: WakeMeSettings) {
+        self.wakeMeSettings = settings
+        // If settings change while listening, reset timer logic
+        if isListening {
+            lastActivityTime = Date()
+            setupWakeMeTimer()
+        }
+    }
+    
     func startListening() {
         guard motionManager.isDeviceMotionAvailable else {
             print("Headphone motion data is not available.")
@@ -57,6 +72,10 @@ class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDeleg
         previousPitch = nil
         previousYaw = nil
         baselineYaw = nil
+        
+        // Reset Wake Me
+        lastActivityTime = Date()
+        setupWakeMeTimer()
         
         motionManager.startDeviceMotionUpdates(to: .main) { [weak self] (motion, error) in
             guard let self = self, let motion = motion else { return }
@@ -78,8 +97,53 @@ class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDeleg
         }
     }
     
+    private func setupWakeMeTimer() {
+        wakeMeTimer?.invalidate()
+        if wakeMeSettings.isEnabled {
+            wakeMeTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+                self?.checkActivity()
+            }
+        }
+    }
+    
+    private func checkActivity() {
+        guard wakeMeSettings.isEnabled else { return }
+        
+        let timeSinceActivity = Date().timeIntervalSince(lastActivityTime)
+        if timeSinceActivity >= wakeMeSettings.timeout {
+            playAlertSound()
+            // Reset to avoid spamming sound every second immediately
+            // But realistically, user should wake up and move, resetting it.
+            // We can add a small buffer or just let it trigger again if they stay still.
+            // For now, let's reset lastActivityTime so it snoozes for the timeout duration.
+            lastActivityTime = Date() 
+        }
+    }
+    
+    private func playAlertSound() {
+        if let sound = NSSound(named: wakeMeSettings.soundName) {
+            sound.play()
+        } else {
+            NSSound.beep()
+        }
+    }
+    
     private func detectGestures(currentPitch: Double, currentYaw: Double) {
         guard let prevPitch = previousPitch, let prevYaw = previousYaw else { return }
+        
+        // Activity Detection for Wake Me
+        // Calculate total movement magnitude
+        let deltaP = abs(currentPitch - prevPitch)
+        let deltaY = abs(currentYaw - prevYaw)
+        
+        // Activity Threshold:
+        // Sensitivity 0.0 -> Needs 0.10 movement to count as activity
+        // Sensitivity 1.0 -> Needs 0.01 movement
+        let activityThreshold = 0.10 - (wakeMeSettings.sensitivity * 0.09)
+        
+        if deltaP > activityThreshold || deltaY > activityThreshold {
+            lastActivityTime = Date()
+        }
         
         // Pitch Detection (Up/Down)
         let pitchDelta = currentPitch - prevPitch
@@ -119,6 +183,8 @@ class MotionViewModel: NSObject, ObservableObject, CMHeadphoneMotionManagerDeleg
         previousYaw = nil
         baselineYaw = nil
         isListening = false
+        wakeMeTimer?.invalidate()
+        wakeMeTimer = nil
     }
     
     // MARK: - CMHeadphoneMotionManagerDelegate
