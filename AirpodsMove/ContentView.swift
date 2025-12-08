@@ -621,9 +621,11 @@ struct WakeMeConfigSheet: View {
                     .tint(.orange)
                 
                 HStack {
-                    Text("Needs More Movement")
+                    Text("I'll be more active\n(Needs more movement)")
+                        .multilineTextAlignment(.leading)
                     Spacer()
-                    Text("Needs Less Movement")
+                    Text("I'll be less active\n(Needs less active)")
+                        .multilineTextAlignment(.trailing)
                 }
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -641,12 +643,12 @@ struct WakeMeConfigSheet: View {
                     Picker("Minutes", selection: $minutes) {
                         ForEach(0...59, id: \.self) { Text("\($0) min").tag($0) }
                     }
-                    .frame(width: 120)
+                    .frame(width: 140)
                     
                     Picker("Seconds", selection: $seconds) {
                         ForEach(0...59, id: \.self) { Text("\($0) sec").tag($0) }
                     }
-                    .frame(width: 120)
+                    .frame(width: 140)
                 }
                 .pickerStyle(MenuPickerStyle())
             }
