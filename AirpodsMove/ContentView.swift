@@ -154,7 +154,8 @@ struct ContentView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 .padding(.horizontal)
-                .padding(.vertical, 20)
+                .padding(.bottom, 20)
+                .padding(.top, 5)
                 
                 // Permissions Warning
                 if !actionController.isPermissionGranted {
