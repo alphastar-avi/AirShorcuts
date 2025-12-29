@@ -19,7 +19,7 @@ https://github.com/user-attachments/assets/9619f9fb-f1df-4a11-9a09-85a4693e9a3b
 * Customizable actions: media, system controls, or any keyboard shortcut
 * Adjustable sensitivity for accurate gesture recognition
 * Live visual feedback for motion data and connection status
-
+And more!
 ---
 
 ## Requirements
