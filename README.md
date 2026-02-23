@@ -54,3 +54,8 @@ The **Wake Me** feature acts as an inactivity alarm, perfect for when you need t
 Motion tracking uses more power while active, so AirPods may drain faster during use. This behavior is similar to features like Spatial Audio, which rely on the same motion sensors. Stopping tracking returns battery usage to normal. It does not harm hardware, though more frequent charging can contribute to typical long-term battery wear.
 
 ---
+
+## Enable Permission 
+
+https://github.com/user-attachments/assets/544b3480-a337-4740-ad3a-879c047d3d69
+
