@@ -3,7 +3,8 @@
 Air Shortcuts lets you control your Mac using head movements detected by supported AirPods. Assign actions to Up, Down, Left, and Right gestures to manage media, adjust volume or brightness, trigger keyboard shortcuts without using your hands, or use the **Wake Me** feature to stay alert with an inactivity alarm.
 More features yet to come!
 
-<img width="861" height="758" alt="Screenshot 2025-12-04 at 3 05 48 AM" src="https://github.com/user-attachments/assets/f39d38ec-a87f-400c-bc66-0e3a27757508" />
+<img width="941" height="857" alt="AirShorcuts UI" src="https://github.com/user-attachments/assets/942ca664-b367-4b34-8099-ef9b607f79c3" />
+
 
 
 ---
